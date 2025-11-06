@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Better 2.0 – Theme Toggle</title>
+
+  <!-- Early theme initialization -->
+  <script>
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  </script>
+
+  <style>
+    :root {
+      --bg-color: #e0f7fa;
+      --text-color: #111;
+      --glass-bg: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.3);
+      --accent: #007aff;
+    }
+    [data-theme="dark"] {
+      --bg-color: #1a1a1a;
+      --text-color: #e0e0e0;
+      --glass-bg: rgba(30, 30, 30, 0.4);
+      --glass-border: rgba(0, 255, 255, 0.2);
+      --accent: #00ffff;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 2rem;
+      min-height: 100vh;
+      transition: background 0.5s, color 0.5s;
+    }
+    h1 {
+      margin-bottom: 1rem;
+    }
+    .toggle-switch {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 30px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      padding: 3px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .toggle-knob {
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+    [data-theme="dark"] .toggle-knob {
+      transform: translateX(30px);
+    }
+  </style>
+</head>
+<body>
+  <h1>Better 2.0 Theme Toggle</h1>
+  <p>Click the switch to toggle between 🌞 light and 🌙 dark mode.</p>
+
+  <div class="toggle-switch" onclick="toggleTheme()">
+    <div class="toggle-knob" id="themeIcon">🌞</div>
+  </div>
+
+  <script>
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      updateThemeIcon(next);
+    }
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById("themeIcon");
+      icon.textContent = theme === "dark" ? "🌙" : "🌞";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const theme = document.documentElement.getAttribute("data-theme");
+      updateThemeIcon(theme);
+    });
+  </script>
+</body>
+</html>
