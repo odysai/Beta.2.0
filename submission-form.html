@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Better 2.0 – Submission Form</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8ff;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 100%;
+      max-width: 400px;
+    }
+    input, button {
+      padding: 0.6rem;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    button {
+      background: #007aff;
+      color: white;
+      border: none;
+    }
+    #confirmationMsg, #errorMsg {
+      margin-top: 1rem;
+      font-weight: bold;
+    }
+    #confirmationMsg {
+      color: green;
+    }
+    #errorMsg {
+      color: red;
+    }
+  </style>
+</head>
+<body>
+  <h2>Submit Your Message</h2>
+  <form id="feedbackForm">
+    <input type="text" id="userInput" placeholder="Your message..." required />
+    <input type="text" id="honeypot" style="display:none" />
+    <button id="submitBtn" type="submit">Submit</button>
+  </form>
+  <p id="confirmationMsg" style="display:none">Your submission has been received.</p>
+  <p id="errorMsg" style="display:none">Something went wrong. Please try again.</p>
+
+  <script>
+    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const honeypot = document.getElementById("honeypot").value;
+      const confirmationMsg = document.getElementById("confirmationMsg");
+      const errorMsg = document.getElementById("errorMsg");
+
+      if (honeypot !== "") {
+        confirmationMsg.style.display = "none";
+        errorMsg.style.display = "block";
+        errorMsg.textContent = "Bot detected.";
+        return;
+      }
+
+      confirmationMsg.style.display = "block";
+      errorMsg.style.display = "none";
+    });
+  </script>
+</body>
+</html>
