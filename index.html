@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Better 2.0 – Submission Portal</title>
+
+  <!-- Early theme initialization -->
+  <script>
+    const savedTheme = localStorage.getItem("theme") || "light";
+    document.documentElement.setAttribute("data-theme", savedTheme);
+  </script>
+
+  <style>
+    :root {
+      --bg-color: #e0f7fa;
+      --text-color: #111;
+      --glass-bg: rgba(255, 255, 255, 0.2);
+      --glass-border: rgba(255, 255, 255, 0.3);
+      --accent: #007aff;
+    }
+    [data-theme="dark"] {
+      --bg-color: #1a1a1a;
+      --text-color: #e0e0e0;
+      --glass-bg: rgba(30, 30, 30, 0.4);
+      --glass-border: rgba(0, 255, 255, 0.2);
+      --accent: #00ffff;
+    }
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', sans-serif;
+      background: var(--bg-color);
+      color: var(--text-color);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+      min-height: 100vh;
+      transition: background 0.5s, color 0.5s;
+    }
+    .glass-panel {
+      backdrop-filter: blur(12px);
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 20px;
+      padding: 2rem;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+    }
+    select, input {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      width: 100%;
+      border-radius: 8px;
+      border: none;
+      font-size: 1rem;
+    }
+    #submitBtn {
+      margin-top: 1rem;
+      padding: 0.7rem;
+      width: 100%;
+      border: none;
+      border-radius: 8px;
+      font-size: 1rem;
+      background: linear-gradient(45deg, #007aff, #8e44ad);
+      color: white;
+      box-shadow: 0 0 10px var(--accent);
+      transition: box-shadow 0.3s ease;
+    }
+    #submitBtn:hover {
+      box-shadow: 0 0 20px var(--accent);
+    }
+    .toggle-switch {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 60px;
+      height: 30px;
+      background: var(--glass-bg);
+      border: 1px solid var(--glass-border);
+      border-radius: 30px;
+      display: flex;
+      align-items: center;
+      padding: 3px;
+      cursor: pointer;
+      box-shadow: 0 0 10px rgba(0,0,0,0.2);
+    }
+    .toggle-knob {
+      width: 24px;
+      height: 24px;
+      background: var(--accent);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      transition: transform 0.3s ease;
+    }
+    [data-theme="dark"] .toggle-knob {
+      transform: translateX(30px);
+    }
+  </style>
+</head>
+<body>
+  <div class="glass-panel">
+    <label id="languageLabel">Language</label>
+    <select id="languageToggle">
+      <option value="en">English</option>
+      <option value="my">မြန်မာ</option>
+      <option value="shn">တႆး</option>
+    </select>
+
+    <label id="submissionLabel">Type of Submission</label>
+    <select id="submissionSelect"></select>
+
+    <h2 id="ctaText">Share your truth anonymously</h2>
+    <form id="feedbackForm">
+      <input type="text" id="userInput" placeholder="Your message..." required />
+      <input type="text" id="honeypot" style="display:none" />
+      <button id="submitBtn" type="submit">Submit</button>
+    </form>
+    <p id="confirmationMsg" style="display:none"></p>
+    <p id="errorMsg" style="display:none"></p>
+  </div>
+
+  <div class="toggle-switch" onclick="toggleTheme()">
+    <div class="toggle-knob" id="themeIcon">🌞</div>
+  </div>
+
+  <script>
+    const translations = {
+      en: {
+        submit: "Submit",
+        cta: "Share your truth anonymously",
+        confirmation: "Your submission has been received.",
+        error: "Something went wrong. Please try again.",
+        language: "Language",
+        submission: "Type of Submission",
+        options: ["Feedback", "Report", "Request"]
+      },
+      my: {
+        submit: "တင်ပြရန်",
+        cta: "သင်၏အသံကိုမျှဝေပါ",
+        confirmation: "သင်၏တင်ပြချက်ကိုလက်ခံပြီးပါပြီ။",
+        error: "ထပ်မံကြိုးစားပါ။",
+        language: "ဘာသာစကား",
+        submission: "တင်ပြမှုအမျိုးအစား",
+        options: ["တုံ့ပြန်ချက်", "အစီရင်ခံစာ", "တောင်းဆိုချက်"]
+      },
+      shn: {
+        submit: "ပိုၼ်ၽႄတင်းႁင်",
+        cta: "ၵႂၢမ်းတင်ပိုၼ်ၽႄတင်းႁင်",
+        confirmation: "လၢႆႈႁပ်ႉဢဝ်တင်းႁင်ထိုင်ယဝ်ႉၶႃႈ။",
+        error: "ၶႃႈၼႆႉၸႂ်ႉၶႃႈၵႂႃႇတႂ်ႉ",
+        language: "ႁႃႈၵႃႇ",
+        submission: "ၶႃႈတင်ႁင်",
+        options: ["ၶႃႈတင်ႁင်", "ၽႃႇတင်ႁင်", "ၵႂႃႇတင်ႁင်"]
+      }
+    };
+
+    const languageToggle = document.getElementById("languageToggle");
+    const submitBtn = document.getElementById("submitBtn");
+    const ctaText = document.getElementById("ctaText");
+    const confirmationMsg = document.getElementById("confirmationMsg");
+    const errorMsg = document.getElementById("errorMsg");
+    const languageLabel = document.getElementById("languageLabel");
+    const submissionLabel = document.getElementById("submissionLabel");
+    const submissionSelect = document.getElementById("submissionSelect");
+
+    function applyTranslations(lang) {
+      const t = translations[lang];
+      if (!t) return;
+      submitBtn.textContent = t.submit;
+      ctaText.textContent = t.cta;
+      confirmationMsg.textContent = t.confirmation;
+      errorMsg.textContent = t.error;
+      languageLabel.textContent = t.language;
+      submissionLabel.textContent = t.submission;
+      submissionSelect.innerHTML = t.options.map((opt, i) =>
+        `<option value="${['feedback','report','request'][i]}">${opt}</option>`
+      ).join("");
+    }
+
+    languageToggle.addEventListener("change", (e) => {
+      applyTranslations(e.target.value);
+    });
+
+    applyTranslations(languageToggle.value);
+
+    document.getElementById("feedbackForm").addEventListener("submit", function(e) {
+      e.preventDefault();
+      const honeypot = document.getElementById("honeypot").value;
+      if (honeypot !== "") {
+        confirmationMsg.style.display = "none";
+        errorMsg.style.display = "block";
+        errorMsg.textContent = "Bot detected.";
+        return;
+      }
+      confirmationMsg.style.display = "block";
+      errorMsg.style.display = "none";
+    });
+
+    function toggleTheme() {
+      const current = document.documentElement.getAttribute("data-theme");
+      const next = current === "dark" ? "light" : "dark";
+      document.documentElement.setAttribute("data-theme", next);
+      localStorage.setItem("theme", next);
+      updateThemeIcon(next);
+    }
+
+    function updateThemeIcon(theme) {
+      const icon = document.getElementById("themeIcon");
+      icon.textContent = theme === "dark" ? "🌙" : "🌞";
+    }
+
+    window.addEventListener("DOMContentLoaded", () => {
+      const theme = document.documentElement.getAttribute("data-theme");
+      updateThemeIcon(theme);
+    });
+  </script>
+</body>
+</html>
