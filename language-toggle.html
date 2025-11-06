@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Better 2.0 – Language Toggle</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f0f8ff;
+      color: #111;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2rem;
+    }
+    select {
+      margin-top: 1rem;
+      padding: 0.5rem;
+      font-size: 1rem;
+    }
+    h2, label, button {
+      margin-top: 1rem;
+    }
+    button {
+      padding: 0.5rem 1rem;
+      font-size: 1rem;
+      background: #007aff;
+      color: white;
+      border: none;
+      border-radius: 6px;
+    }
+  </style>
+</head>
+<body>
+  <label id="languageLabel">Language</label>
+  <select id="languageToggle">
+    <option value="en">English</option>
+    <option value="my">မြန်မာ</option>
+    <option value="shn">တႆး</option>
+  </select>
+
+  <label id="submissionLabel">Type of Submission</label>
+  <select id="submissionSelect"></select>
+
+  <h2 id="ctaText">Share your truth anonymously</h2>
+  <button id="submitBtn">Submit</button>
+
+  <script>
+    const translations = {
+      en: {
+        submit: "Submit",
+        cta: "Share your truth anonymously",
+        language: "Language",
+        submission: "Type of Submission",
+        options: ["Feedback", "Report", "Request"]
+      },
+      my: {
+        submit: "တင်ပြရန်",
+        cta: "သင်၏အသံကိုမျှဝေပါ",
+        language: "ဘာသာစကား",
+        submission: "တင်ပြမှုအမျိုးအစား",
+        options: ["တုံ့ပြန်ချက်", "အစီရင်ခံစာ", "တောင်းဆိုချက်"]
+      },
+      shn: {
+        submit: "ပိုၼ်ၽႄတင်းႁင်",
+        cta: "ၵႂၢမ်းတင်ပိုၼ်ၽႄတင်းႁင်",
+        language: "ႁႃႈၵႃႇ",
+        submission: "ၶႃႈတင်ႁင်",
+        options: ["ၶႃႈတင်ႁင်", "ၽႃႇတင်ႁင်", "ၵႂႃႇတင်ႁင်"]
+      }
+    };
+
+    const languageToggle = document.getElementById("languageToggle");
+    const submitBtn = document.getElementById("submitBtn");
+    const ctaText = document.getElementById("ctaText");
+    const languageLabel = document.getElementById("languageLabel");
+    const submissionLabel = document.getElementById("submissionLabel");
+    const submissionSelect = document.getElementById("submissionSelect");
+
+    function applyTranslations(lang) {
+      const t = translations[lang];
+      if (!t) return;
+      submitBtn.textContent = t.submit;
+      ctaText.textContent = t.cta;
+      languageLabel.textContent = t.language;
+      submissionLabel.textContent = t.submission;
+      submissionSelect.innerHTML = t.options.map((opt, i) =>
+        `<option value="${['feedback','report','request'][i]}">${opt}</option>`
+      ).join("");
+    }
+
+    languageToggle.addEventListener("change", (e) => {
+      applyTranslations(e.target.value);
+    });
+
+    applyTranslations(languageToggle.value);
+  </script>
+</body>
+</html>
